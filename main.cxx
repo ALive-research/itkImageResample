@@ -63,6 +63,7 @@ template <class T> int DoIt(const Arguments &arguments, T)
 
   auto inputImage = imageReader->GetOutput();
   auto outputOrigin = inputImage->GetOrigin();
+  auto outputDirection= inputImage->GetDirection();
   auto inputSizePixels = inputImage->GetLargestPossibleRegion().GetSize();
   auto inputSpacing = inputImage->GetSpacing();
   double inputSize[3] = {inputSpacing[0] * inputSizePixels[0],
@@ -97,6 +98,7 @@ template <class T> int DoIt(const Arguments &arguments, T)
   imageResampleFilter->SetInput(imageReader->GetOutput());
   imageResampleFilter->SetOutputOrigin(outputOrigin);
   imageResampleFilter->SetOutputSpacing(outputSpacing);
+  imageResampleFilter->SetOutputDirection(outputDirection);
   imageResampleFilter->SetInterpolator(interpolator);
   imageResampleFilter->SetSize(outputSize);
   auto start = realTimeClock->GetRealTimeStamp();
