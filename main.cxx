@@ -6,6 +6,7 @@
 #include <itkBSplineInterpolateImageFunction.h>
 #include <itkNearestNeighborInterpolateImageFunction.h>
 #include <itkLinearInterpolateImageFunction.h>
+#include <itkRealTimeClock.h>
 
 // TCLAP includes
 #include <tclap/ArgException.h>
@@ -92,15 +93,20 @@ template <class T> int DoIt(const Arguments &arguments, T)
       interpolator = inter;
     }
 
+  auto realTimeClock = itk::RealTimeClock::New();
   imageResampleFilter->SetInput(imageReader->GetOutput());
   imageResampleFilter->SetOutputOrigin(outputOrigin);
   imageResampleFilter->SetOutputSpacing(outputSpacing);
   imageResampleFilter->SetInterpolator(interpolator);
   imageResampleFilter->SetSize(outputSize);
+  auto start = realTimeClock->GetRealTimeStamp();
   imageResampleFilter->Update();
+  auto end = realTimeClock->GetRealTimeStamp();
+
+  std::cout << "Time (ms):" << (end - start).GetTimeInMilliSeconds() << std::endl;
 
   // =========================================================================
-  // Resample
+  // Write out the resampled image
   // =========================================================================
   auto imageWriter = ImageWriterType::New();
   imageWriter->SetFileName(arguments.outputFileName);
@@ -111,9 +117,8 @@ template <class T> int DoIt(const Arguments &arguments, T)
 }
 
 // =========================================================================
-// Command-line variables
+// Entry Point
 // =========================================================================
-
 int main(int argc, char **argv)
 {
   // =========================================================================
