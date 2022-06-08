@@ -29,6 +29,7 @@ struct Arguments {
   InterpolationType interpolationType;
   bool isUnsigned;
   unsigned short int x, y, z;
+  bool compress;
 };
 
 // =========================================================================
@@ -112,6 +113,7 @@ template <class T> int DoIt(const Arguments &arguments, T)
   // =========================================================================
   auto imageWriter = ImageWriterType::New();
   imageWriter->SetFileName(arguments.outputFileName);
+  imageWriter->SetUseCompression(arguments.compress);
   imageWriter->SetInput(imageResampleFilter->GetOutput());
   imageWriter->Write();
 
@@ -142,6 +144,7 @@ int main(int argc, char **argv)
     TCLAP::ValueArg<unsigned short int> yInput("y", "size_y", "New size (voxels) y-axis", true, 0, "unsigned short int");
     TCLAP::ValueArg<unsigned short int> zInput("z", "size_z", "New size (voxels) z-axis", true, 0, "unsigned short int");
     TCLAP::SwitchArg unsignedInput("u", "unsigned", "Unsigned values", false);
+    TCLAP::SwitchArg compressInput("c", "compress", "Compress output", false);
 
     cmd.add(inputInput);
     cmd.add(outputInput);
@@ -151,6 +154,7 @@ int main(int argc, char **argv)
     cmd.add(xInput);
     cmd.add(yInput);
     cmd.add(zInput);
+    cmd.add(compressInput);
 
     cmd.parse(argc, argv);
 
@@ -162,6 +166,7 @@ int main(int argc, char **argv)
     arguments.z = zInput.getValue();
     arguments.dataType = static_cast<Arguments::DataType>(datatypeInput.getValue());
     arguments.isUnsigned = unsignedInput.getValue();
+    arguments.compress = compressInput.getValue();
 
     if (arguments.dataType == Arguments::DataType::_float &&
         arguments.isUnsigned) {
