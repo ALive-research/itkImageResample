@@ -180,15 +180,15 @@ int main(int argc, char **argv)
   switch (arguments.dataType)
     {
     case Arguments::DataType::_short:
-      return DoIt(arguments, arguments.isUnsigned ? static_cast<unsigned short int>(0)
-                                                  : static_cast<short int>(0));
+      return arguments.isUnsigned ? DoIt<unsigned short>(arguments, 0)
+                                  : DoIt<short>(arguments, 0);
 
     case Arguments::DataType::_int:
-      return DoIt(arguments, arguments.isUnsigned ? static_cast<unsigned int>(0)
-                                                  : static_cast<int>(0));
+      return arguments.isUnsigned ? DoIt<unsigned int>(arguments, 0)
+                                  : DoIt<int>(arguments, 0);
 
     case Arguments::DataType::_float:
-      return DoIt(arguments, static_cast<float>(0));
+      return DoIt<float>(arguments, 0);
     }
 
   return EXIT_SUCCESS;
