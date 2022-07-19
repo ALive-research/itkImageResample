@@ -78,6 +78,11 @@ template <class T> int DoIt(const Arguments &arguments, T)
 
   typename ImageType::SizeType outputSize = {arguments.x, arguments.y, arguments.z};
 
+  double NewOutputOrigin[3] = { 0.0, 0.0 , 0.0};
+  NewOutputOrigin[0]= outputOrigin[0]+(outputSpacing[0]/2.0-inputSpacing[0]/2.0)*outputDirection[0][0];
+  NewOutputOrigin[1]= outputOrigin[1]+(outputSpacing[1]/2.0-inputSpacing[1]/2.0)*outputDirection[1][1];
+  NewOutputOrigin[2]= outputOrigin[2]+(outputSpacing[2]/2.0-inputSpacing[2]/2.0)*outputDirection[2][2];
+
   typename InterpolatorType::Pointer interpolator;
   switch(arguments.interpolationType)
     {
@@ -97,7 +102,7 @@ template <class T> int DoIt(const Arguments &arguments, T)
 
   auto realTimeClock = itk::RealTimeClock::New();
   imageResampleFilter->SetInput(imageReader->GetOutput());
-  imageResampleFilter->SetOutputOrigin(outputOrigin);
+  imageResampleFilter->SetOutputOrigin(NewOutputOrigin);
   imageResampleFilter->SetOutputSpacing(outputSpacing);
   imageResampleFilter->SetOutputDirection(outputDirection);
   imageResampleFilter->SetInterpolator(interpolator);
